@@ -1,0 +1,169 @@
+$ ps aux | grep python
+root         881  0.0  0.3  41048 18036 ?        Ss   21:10   0:00 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+rahman      2492  0.0  0.4  60036 29180 ?        S    21:11   0:00 /usr/bin/python3 /usr/share/system-config-printer/applet.py
+rahman      6770  0.0  0.0   6208  3836 ?        S    21:25   0:01 /home/rahman/.vscode/extensions/ms-python.python-2026.0.0-linux-x64/python-env-tools/bin/pet server
+rahman      7024  1.2  7.2 1219624748 430884 ?   Sl   21:25   1:03 /usr/share/code/code /home/rahman/.vscode/extensions/ms-python.vscode-pylance-2025.4.1/dist/server.bundle.js --cancellationReceive=file:ab0de7cb78c601ec3c0f5cf93a0fc4d56be47e7f12 --node-ipc --clientProcessId=2963
+rahman     12067  0.0  0.2  22384 11952 pts/2    S+   22:48   0:00 /home/rahman/Downloads/python/.venv/bin/python
+rahman     12540  0.0  0.0   9216  2208 pts/3    S+   22:53   0:00 grep --color=auto python
+(.venv) rahman@rahman-HP-Pavilion-Gaming-Laptop-15-ec0xxx:~/Downloads/python$ 
+
+
+sudo apt install python3.10-venv -y 
+
+// go inside flask_api/venv
+
+// ✅ 3️⃣ Create a Virtual Environment (Recommended)
+python3 -m venv venv
+
+
+// Activate it:
+
+source venv/bin/activate
+
+
+// You’ll see:
+
+// (venv) rahman@...
+
+
+pip install flask
+
+
+// verify 
+python -c "import flask; print(flask.__version__)"
+
+<string>:1: DeprecationWarning: The '__version__' attribute is deprecated and will be removed in Flask 3.2. Use feature detection or 'importlib.metadata.version("flask")' instead.
+3.1.2
+(venv) rahman@rahman-HP-Pavilion-Gaming-Laptop-15-ec0xxx:~/Downloads/python/flask_api/venv$ 
+
+
+// ✅ Correct Location
+
+// Your folder should look like this:
+
+flask_api/
+├── venv/
+└── app.py   👈 create it HERE
+
+// run 
+python app.py
+
+
+The following environment is selected: ~/Downloads/python/.venv/bin/python
+
+
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+i have installed flask two times
+
+Ah! That explains the confusion — you probably installed Flask once in the global Python environment and once in the virtual environment.
+
+Here’s what’s happening:
+
+1️⃣ Global vs Virtual Environment
+
+Global Python: python3 -m pip install flask
+This installs Flask system-wide. If you run python3 app.py without activating .venv, it uses this global Python. If Flask wasn’t installed globally, you’d get the ModuleNotFoundError.
+
+Virtual Environment (.venv): source .venv/bin/activate → pip install flask
+Flask is installed only inside this virtual environment. When .venv is active, running python app.py works perfectly.
+
+💡 So installing Flask globally is unnecessary if you always use a virtual environment — the venv is all you need.
+
+2️⃣ What You Should Do
+
+Always activate the virtual environment before running your app:
+
+source ~/Downloads/python/.venv/bin/activate
+python app.py
+
+
+Or, if you don’t want to activate each time, run:
+
+~/Downloads/python/.venv/bin/python app.py
+
+
+You can uninstall the global Flask if you want, to avoid confusion:
+
+python3 -m pip uninstall flask
+
+3️⃣ Why You Got the Error Now
+
+When you opened a new terminal, you ran:
+
+python3 app.py
+
+
+Without activating .venv, your system Python doesn’t see Flask.
+
+Flask exists only in .venv, so Python complains: ModuleNotFoundError.
+
+If you want, I can give you a single command to always run your Flask app correctly, even in a new terminal, so you never have to worry about which environment is active. It’s a neat trick many developers use.
+
+Do you want me to do that?
+
+
+------------------------------------------------------------------------------------
+
+
+
+ok i have installed flask globally 
+
+Got it! If Flask is now installed globally, your system Python should be able to run your app without activating a virtual environment.
+
+1️⃣ Test Global Flask
+
+Run:
+
+python3 -m pip show flask
+
+
+You should see something like:
+
+Name: Flask
+Version: 3.x.x
+Location: /usr/local/lib/python3.x/dist-packages
+
+
+Then try running your app:
+
+python3 app.py
+
+
+You should see:
+
+ * Running on http://127.0.0.1:5000
+ * Debug mode: on
+
+2️⃣ Notes About Global vs Virtual Environment
+
+Global installation works fine, but it has downsides:
+
+Different projects may need different Flask versions, which can conflict.
+
+Upgrading or uninstalling Flask globally affects all projects using it.
+
+Virtual environment (.venv) isolates packages per project. Recommended for development.
+
+3️⃣ Optional: Stick to Virtual Environment (Cleaner)
+
+Even though Flask is installed globally, it’s cleaner to use .venv. Then you don’t worry about conflicts.
+
+Steps:
+
+# Activate your venv
+source ~/Downloads/python/.venv/bin/activate
+
+# Install Flask inside venv
+pip install flask
+
+# Run your app
+python app.py
+
+
+💡 Summary:
+
+Globally installed Flask → works system-wide.
+
+Virtual environment Flask → isolated, safer for multiple projects.

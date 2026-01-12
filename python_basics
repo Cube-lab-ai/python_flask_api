@@ -1,0 +1,20 @@
+🔹 Common Use: Checking “empty” or “missing”
+Python has the concept of truthy and falsey values.
+Falsey values in Python
+
+
+False
+None
+0
+0.0
+""
+[]
+{}
+()
+set()
+
+Example:
+name = ""
+if not name:
+    # python will internally check bool(name)
+    print("Name is empty or missing")
