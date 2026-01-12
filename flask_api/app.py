@@ -1,4 +1,7 @@
 from flask import Flask, jsonify, request
+from mysql.connector import Error
+import mysql.connector
+
 
 app = Flask(__name__)
 
@@ -82,21 +85,13 @@ def hello():
 
 @app.route("/api/getdatafromfinacle", methods=["GET"])
 def getfinalcedata():
-    namefinalce = request.args.get("finale name" , "infosys private limited")
+    namefinalce = request.args.get("finalename" , "infosys private limited")
     return jsonify({"message" : f"gotten data from finacle {namefinalce}"})
 
 @app.route("/api/getandreturnname", methods=["GET"])
 def getandreturnname():
     name = request.args.get("name")
     return jsonify({"message" : f"hello {name}"})   
-
-@app.route("/api/user", methods=["POST"])
-def create_user():
-    data = request.get_json()
-    return jsonify({
-        "status": "success",
-        "received_data": data
-    })
 
 @app.route("/api/getdata", methods=['GET'])
 def callgetdata():
@@ -145,8 +140,42 @@ def name(nameed):
         return jsonify({"status" : "0", "message" : "no data found"}), 400
     return jsonify({"status" : 1})
 
+# mysql 
+
+def get_db_connection():
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",          # XAMPP default
+            password="",          # Usually empty for XAMPP root
+            database="testdb"     # Your database name
+        )
+        return connection
+    except Error as e:
+        print("Database connection error:", e)
+        return None
+
+@app.route("/api/user", methods=["POST"])
+def create_user():
+    data = request.get_json()
+    name = data.get("name")
+    email = data.get("email")
+
+    if not name or not email:
+        return jsonify({"error": "name and email required"}), 400
+
+    conn = get_db_connection()
+    if not conn:
+        return jsonify({"error": "DB connection failed"}), 500
+
+    cursor = conn.cursor()
+    query = "INSERT INTO users (name, email) VALUES (%s, %s)"
+    cursor.execute(query, (name, email))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return jsonify({"status": "success", "message": "User created"})
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
